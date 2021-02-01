@@ -1,0 +1,29 @@
+<div class="layout">
+  <div class="search-bar">
+    <input
+      [ngModel]="query"
+      (ngModelChange)="changed($event)"
+      type="text"
+      name="search"
+      placeholder="Search..."
+    />
+    <div class="buttons-container">
+      <button class="button">Search</button>
+    </div>
+  </div>
+  <div class="results" *ngIf="products.length">
+    <div class="item" *ngFor="let product of products">
+      <div class="image">
+        <img
+          [src]="product.imageUrl"
+          [alt]="product.title"
+          class="product-image"
+        />
+      </div>
+      <div class="content">
+        <div class="name">{{ product.title }}</div>
+        <div class="category">{{ product.categoy }}</div>
+      </div>
+    </div>
+  </div>
+</div>
