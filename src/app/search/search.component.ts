@@ -32,7 +32,7 @@ export class SearchComponent implements OnInit {
       this._cdr.detectChanges();
     });
   }
-ß
+
   private subscribeToQueryChanges(): void {
     // wait 300ms after the last event before emitting last event
     // only emit if value is different from previous value
