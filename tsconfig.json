@@ -1,18 +1,18 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "noImplicitAny": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
+    "module": "es2020",
+    "target": "es5",
     "sourceMap": true,
-    "outDir": "dist",
-    "baseUrl": ".",
-    "types": [
-      "node"
-    ],
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "isolatedModules": true,
+    "outDir": "./dist",
+    "baseUrl": "./src",
+    "types": ["node"],
+    "typeRoots": ["./node_modules/@types"],
     "paths": {
-      "*": ["node_modules/*"]
+      "@common/*": ["common/*"]
     }
   },
-  "include": ["src/**/*", "node_modules/electron"]
+  "include": ["src/**/*.ts", "node_modules/electron"]
 }

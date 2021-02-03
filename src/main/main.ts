@@ -1,13 +1,13 @@
 import { app, BrowserWindow, screen } from "electron";
 import { Observable } from "rxjs";
-import { createIpcReceiver } from "./ipc/receiver.ipc";
-import { AppConfig } from "./environments/environment";
-import { createRequest } from "./ipc/request.ipc";
+import { createIpcReceiver } from "../common/ipc/receiver.ipc";
+import { AppConfig } from "../common/environments/environment";
+import { createRequest } from "../common/ipc/request.ipc";
+import * as path from "path";
 
 export class Main {
-  private window: BrowserWindow;
-  private args: string[] = process.argv.slice(1);
-  private serve: boolean = this.args.some((val) => val === "--serve");
+  private mainWindow: BrowserWindow;
+  private isDevelopment = process.env.NODE_ENV !== "production";
 
   public init(): void {
     try {
@@ -47,54 +47,46 @@ export class Main {
   }
 
   private createWindow(): void {
-    if (this.window) return;
+    if (this.mainWindow) return;
     const electronScreen = screen;
     const size = electronScreen.getPrimaryDisplay().workAreaSize;
 
     // Create the browser window.
-    this.window = new BrowserWindow({
+    this.mainWindow = new BrowserWindow({
       x: 0,
       y: 0,
       width: size.width / 2,
       height: size.height / 2,
       webPreferences: {
         nodeIntegration: true,
-        allowRunningInsecureContent: this.serve ? true : false,
+        allowRunningInsecureContent: this.isDevelopment ? true : false,
         contextIsolation: false, // false if you want to run 2e2 test with Spectron
         enableRemoteModule: true, // true if you want to run 2e2 test  with Spectron or use remote module in renderer context (ie. Angular)
       },
     });
 
-    if (this.serve) {
-      this.window.webContents.openDevTools();
-
-      // require("electron-reload")(__dirname, {
-      //   electron: require(`${__dirname}/node_modules/electron`),
-      // });
-      this.window.loadURL("http://localhost:4200");
+    if (this.isDevelopment) {
+      this.mainWindow.webContents.openDevTools();
+      this.mainWindow.loadURL(
+        `http://${process.env.ELECTRON_WEBPACK_WDS_HOST}:${process.env.ELECTRON_WEBPACK_WDS_PORT}`
+      );
     } else {
-      // this.window.loadURL(
-      //   url.format({
-      //     pathname: path.join(__dirname, "dist/index.html"),
-      //     protocol: "file:",
-      //     slashes: true,
-      //   })
-      // );
+      this.mainWindow.loadFile(path.resolve(__dirname, "index.html"));
     }
     // Emitted when the window is closed.
-    this.window.on("closed", () => {
+    this.mainWindow.on("closed", () => {
       // Dereference the window object, usually you would store window
       // in an array if your app supports multi windows, this is the time
       // when you should delete the corresponding element.
-      this.window = null;
+      this.mainWindow = null;
     });
   }
 
   public openWindow(): void {
-    if (this.window) {
-      this.window.show();
-      this.window.focus();
-      this.window.webContents.focus();
+    if (this.mainWindow) {
+      this.mainWindow.show();
+      this.mainWindow.focus();
+      this.mainWindow.webContents.focus();
       return;
     }
   }

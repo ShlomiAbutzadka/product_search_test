@@ -1,8 +1,8 @@
-import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef, Inject } from "@angular/core";
 import { SearchService } from "../search.service";
 import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
 import { Subject } from "rxjs";
-import { Product } from "../../models/product.interface";
+import { Product } from "@common/models/product.interface";
 
 @Component({
   selector: "app-search",
@@ -16,8 +16,8 @@ export class SearchComponent implements OnInit {
   products: Product[];
 
   constructor(
-    public searchService: SearchService,
-    private _cdr: ChangeDetectorRef
+    @Inject(SearchService) public searchService: SearchService,
+    @Inject(ChangeDetectorRef) private _cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {

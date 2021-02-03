@@ -1,0 +1,12 @@
+{
+    "title": "Product search",
+    "main": {
+      "sourceDirectory": "src/main"
+    },
+    "renderer": {
+      "sourceDirectory": "dist",
+      "template": "dist/index.html"
+    },
+    "commonSourceDirectory": "src/common",
+    "staticSourceDirectory": "static"
+  }

@@ -5,24 +5,24 @@
   "projects": {
     "product-search": {
       "root": "",
-      "sourceRoot": "src",
+      "sourceRoot": "src/renderer/",
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
             "preserveSymlinks": true,
-            "outputPath": "dist",
-            "index": "src/index.html",
-            "main": "src/main.ts",
-            "tsConfig": "tsconfig.app.json",
+            "outputPath": "./dist",
+            "index": "src/renderer/index.html",
+            "main": "src/renderer/main.ts",
+            "tsConfig": "tsconfig.json",
             "aot": true,
-            "polyfills": "src/polyfills.ts",
+            "polyfills": "src/renderer/polyfills.ts",
             "assets": [
-              "src/assets"
+              "src/renderer/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/renderer/styles.scss"
             ],
             "scripts": []
           },
@@ -38,8 +38,8 @@
               "buildOptimizer": false,
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.dev.ts"
+                  "replace": "src/common/environments/environment.ts",
+                  "with": "src/common/environments/environment.dev.ts"
                 }
               ]
             },
@@ -55,8 +55,8 @@
               "buildOptimizer": false,
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.web.ts"
+                  "replace": "src/common/environments/environment.ts",
+                  "with": "src/common/environments/environment.web.ts"
                 }
               ]
             },
@@ -71,8 +71,8 @@
               "buildOptimizer": true,
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "replace": "src/common/environments/environment.ts",
+                  "with": "src/common/environments/environment.prod.ts"
                 }
               ]
             }

@@ -1,16 +1,18 @@
 {
     "name": "product-search",
     "version": "0.0.0",
-    "main": "main.js",
-    "private": true,
     "scripts": {
-
+        "dev": "electron-webpack dev",
+        "dev2": "webpack serve",
+        "compile": "electron-webpack",
+        "dist": "yarn compile && electron-builder",
+        "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
         "watch": "tsc -w",
         "lint": "eslint -c .eslintrc --ext .ts ./src",
         "serve": "ng serve",
         "ng": "ng",
         "start": "npm-run-all -p ng:serve electron:serve",
-        "build": "tsc && ng build --base-href ./",
+        "build": "ng build --base-href ./ && tsc",
         "build:dev": "npm run build -- -c dev",
         "build:prod": "npm run build -- -c production",
         "ng:serve": "ng serve",
@@ -27,7 +29,10 @@
     "dependencies": {
         "@reactivex/rxjs": "6.6.3",
         "buffer": "6.0.3",
+        "core-util-is": "1.0.2",
+        "electron-webpack-ts": "4.0.1",
         "events": "3.2.0",
+        "source-map-support": "0.5.19",
         "stream": "0.0.2",
         "timers": "0.1.1"
     },
@@ -62,9 +67,10 @@
         "conventional-changelog-cli": "2.1.1",
         "core-js": "3.6.5",
         "cross-env": "7.0.2",
-        "electron": "11.0.3",
-        "electron-builder": "22.9.1",
+        "electron": "8.2.0",
+        "electron-builder": "22.4.1",
         "electron-reload": "1.5.0",
+        "electron-webpack": "2.8.2",
         "eslint": "7.13.0",
         "eslint-plugin-import": "2.22.1",
         "eslint-plugin-jsdoc": "30.7.8",
@@ -85,22 +91,18 @@
         "typescript": "4.0.5",
         "wait-on": "5.0.1",
         "webdriver-manager": "12.1.7",
+        "webpack": "4.42.1",
         "zone.js": "0.10.3"
     },
     "engines": {
         "node": ">=10.13.0"
     },
-    "husky": {
-        "hooks": {
-            "pre-commit": "npm run pretty -- --staged"
+    "electronWebpack": {
+        "renderer": {
+            "webpackConfig": "webpack.conf.js"
+        },
+        "main": {
+            "webpackConfig": "webpack.conf.js"
         }
-    },
-    "browser": {
-        "fs": false,
-        "path": false,
-        "os": false
-    },
-    "browserslist": [
-        "chrome 83"
-    ]
+    }
 }
