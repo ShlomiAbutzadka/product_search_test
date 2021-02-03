@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 import { ElectronService } from "./electron.service";
 
 @Injectable({
@@ -7,40 +7,14 @@ import { ElectronService } from "./electron.service";
 })
 export class SearchService {
   private TAG: string = `[${this.constructor.name}]: `;
-  products = new BehaviorSubject<any[]>([]);
+  private _products: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
+  public readonly products$: Observable<any[]> = this._products.asObservable();
 
-  constructor(private _electronService: ElectronService) {
-
-  }
+  constructor(private _electronService: ElectronService) {}
 
   getProducts(query: string): void {
-    console.log(this.TAG, 'getProducts', query);
-    
-    this._electronService.exec('getProducts', query)
-    .subscribe({
-      next: (value:any) => {
-        // this.products.next(value);
-        console.log(this.TAG, 'getProducts next:', value);
-       
-      },
-      error: err => console.error(err),
-      complete: () => console.log('End'),
-    });
-
+    this._electronService
+      .exec("getProducts", query)
+      .subscribe((value: any) => this._products.next(value));
   }
-
-  // getProducts2(query: string): Promise<any> {
-  //   return new Promise((resolve, reject) => {
-  //     electron.ipcRenderer.on(
-  //       "getProductsResponse",
-  //       (event: any, response: string) => {
-  //         console.log(this.TAG, "getProductsResponse: ", response);
-  //         this.products.next(JSON.parse(response));
-  //       }
-  //     );
-
-  //     console.log(this.TAG, "getProducts: ", query);
-  //     electron.ipcRenderer.send("getProducts", query);
-  //   });
-  // }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { SearchService } from "../search.service";
 import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
 import { Subject } from "rxjs";
+import { Product } from "../../models/product.interface";
 
 @Component({
   selector: "app-search",
@@ -12,11 +13,10 @@ export class SearchComponent implements OnInit {
   private TAG: string = `[${this.constructor.name}]: `;
   query: string;
   queryChanged: Subject<string> = new Subject<string>();
-
-  products: any[];
+  products: Product[];
 
   constructor(
-    private _searchService: SearchService,
+    public searchService: SearchService,
     private _cdr: ChangeDetectorRef
   ) {}
 
@@ -26,9 +26,9 @@ export class SearchComponent implements OnInit {
   }
 
   private subscribeToResultChanges(): void {
-    this._searchService.products.subscribe((value) => {
+    this.searchService.products$.subscribe((value: Product[]) => {
       this.products = value;
-      console.log(this.TAG, 'subscribeToResultChanges: ', value);
+      console.log(this.TAG, "subscribeToResultChanges: ", value);
       this._cdr.detectChanges();
     });
   }
@@ -40,7 +40,7 @@ export class SearchComponent implements OnInit {
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe((query) => {
         this.query = query;
-        this._searchService.getProducts(query);
+        this.searchService.getProducts(query);
       });
   }
 

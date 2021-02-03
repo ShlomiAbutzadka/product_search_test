@@ -1,17 +1,8 @@
-import {
-  app,
-  BrowserWindow,
-  screen,
-  ipcMain,
-  net,
-  IncomingMessage,
-} from "electron";
-import { IpcMainEvent } from "electron/main";
-import * as path from "path";
-import * as url from "url";
-
-const BASE_URL: string =
-  "https://pcsa57ebsj.execute-api.us-east-1.amazonaws.com";
+import { app, BrowserWindow, screen } from "electron";
+import { Observable } from "rxjs";
+import { createIpcReceiver } from "./ipc/receiver.ipc";
+import { AppConfig } from "./environments/environment";
+import { createRequest } from "./ipc/request.ipc";
 
 export class Main {
   private window: BrowserWindow;
@@ -29,43 +20,19 @@ export class Main {
       app.on("window-all-closed", this.onWindowAllClosed.bind(this));
       app.on("activate", this.onActivate.bind(this));
 
-      ipcMain.on("getProducts", (event: IpcMainEvent, query: string) => {
-        this.getProducts(event, query);
-      });
+      createIpcReceiver("getProducts", (args: string) =>
+        this.getProducts(args)
+      );
     } catch (error) {
       console.log(error);
       throw error;
     }
   }
 
-  private async getProducts(event: IpcMainEvent, query: string): Promise<void> {
-    const url: string = `${BASE_URL}/api/products/search?query=${query}`;
-    const response: string = await this.makeClientRequest(url);
-    event.reply("getProducts/next", response);
-  }
-
-  private makeClientRequest(url: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const request: Electron.ClientRequest = net.request({
-        method: "GET",
-        protocol: "https:",
-        url: url,
-      });
-
-      request.on("response", (response: IncomingMessage) => {
-        let body: string = "";
-        response.on("data", (chunk: Buffer) => {
-          body += chunk;
-        });
-        response.on("end", () => {
-          resolve(body);
-        });
-        response.on("error", () => {
-          reject();
-        });
-      });
-      request.end();
-    });
+  private getProducts(query: string): Observable<any> {
+    const url: string = `${AppConfig.BASE_URL}/api/products/search?query=${query}`;
+    const method: string = "GET";
+    return createRequest({ method, url });
   }
 
   private onActivate(): void {

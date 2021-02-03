@@ -9,13 +9,16 @@ export function createIpcSender<A, R>(channel: string, payload: A) {
     const message$: Observable<R> = new Observable((observer: any) => {
       const channels = buildChannel(channel);
 
-      const onNext = ({  }: Event, args: { args: any; value: any }) => {
-        observer.next(args.value);
+      const onNext = ({  }: Event, value: any) => {
+        observer.next(JSON.parse(value));
+
+        removeListeners();
+        observer.complete();
       };
 
-      const onError = ({  }: Event, args: { args: any; error: any }) => {
+      const onError = ({  }: Event, error: any) => {
         removeListeners();
-        observer.error(args.error);
+        observer.error(JSON.parse(error));
       };
 
       const onComplete = ({  }: Event) => {
